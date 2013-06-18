@@ -39,10 +39,11 @@ _pybrew_complete()
 
  	
 	case "${COMP_WORDS[COMP_CWORD-1]}" in
-		use)
+		use|delete|rename|clone|print_activate)
 			_pybrew_venv_current
 			_pybrew_compreply $venv_current
-		;;	
+		;;
+			
 		*)
 		;;
 	esac
