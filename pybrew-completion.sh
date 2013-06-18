@@ -1,11 +1,11 @@
 _pybrew_complete()
 {
-  local commands cur prev
+  local commands
  
   COMPREPLY=()
 
   commands=`pythonbrew help |grep -e "^ .*: " | cut -d ":" -f 1 | tr -d " " |tr "\n" " "`
-  
+   
   if [ $COMP_CWORD -eq 1 ]; then
 	
 	_pybrew_compreply $commands
@@ -27,13 +27,39 @@ _pybrew_complete()
 			_pybrew_installed_versions
 			_pybrew_compreply $installed_versions
 		;;
+		venv)
+			_pybrew_venv_commands
+			_pybrew_compreply $venv_commands
+		;;
 		*)
 		;;
-	esac 
+	esac
+
+  elif [ $COMP_CWORD -eq 3 ]; then
+
+ 	
+	case "${COMP_WORDS[COMP_CWORD-1]}" in
+		use)
+			_pybrew_venv_current
+			_pybrew_compreply $venv_current
+		;;	
+		*)
+		;;
+	esac
   fi
 
 
   return 0
+}
+
+_pybrew_venv_commands()
+{
+	venv_commands=$( pythonbrew venv |head -n 1 | awk '{print $4}' | sed -e 's/\[\|\]//g' -e 's/|/ /g' )
+}
+
+_pybrew_venv_current()
+{
+	venv_current=$(pythonbrew venv list |sed -n -e '/\(*\)/,/Python/p'|sed -e '/Python/d')
 }
 
 _pybrew_available_versions()
