@@ -21,7 +21,7 @@ _pybrew_complete()
 		
 		install)
 			_pybrew_available_versions
-			_pybrew_compreply $available_versions
+      _pybrew_compreply $available_versions
 		;;
 		use|switch|uninstall)
 			_pybrew_installed_versions
@@ -67,8 +67,12 @@ _pybrew_available_versions()
 {
 	_pybrew_installed_regex
 	_pybrew_known_versions
-	
-	available_versions=$( echo $known_versions | sed -e "s/$installed_regex//g" )
+
+  if [ -n "$installed_regex" ];then
+	  available_versions=$( echo $known_versions | sed -e "s/$installed_regex//g" )
+  else 
+    available_versions=$known_versions
+  fi 
 
 }
 
@@ -80,7 +84,11 @@ _pybrew_installed_versions()
 _pybrew_installed_regex()
 {
 	_pybrew_installed_versions
-	installed_regex=$( echo $installed_versions |tr "\n " "|"| sed -e "s/|$//" -e "s/|/\\\|/g") 
+
+  installed_regex=""
+  if [ -n "$installed_versions" ];then
+    installed_regex=$( echo $installed_versions |sed -e "s/\n\| /|/g" -e "s/|$//" -e "s/|/\\\|/g") 
+  fi
 }
 
 _pybrew_known_versions()
